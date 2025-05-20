@@ -45,7 +45,10 @@ INSERT INTO Usuario (nome, cpf, email, senha) VALUES
 INSERT INTO Residuo (tipo, pontos_residuo) VALUES
 ('pequeno', 5),
 ('medio', 10),
-('grande', 20);
+('grande', 20),
+('mouse', 30),
+('teclado', 40),
+('fone', 50);
 
 -- Inserções em Descarte
 INSERT INTO Descarte (data_hora, pontos_descarte, fk_usuario_id, fk_residuo_id) VALUES

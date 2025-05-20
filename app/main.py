@@ -1,10 +1,10 @@
 import mysql.connector
 from mysql.connector import Error
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def conectar():
     return mysql.connector.connect(
-        host='db',          # Nome do serviço no docker-compose
+        host="db",          # Nome do serviço no docker-compose
         port=3306,          # Porta interna do container do MySQL
         user="user",
         password="senha",
@@ -34,8 +34,10 @@ def criar_usuario():
     except Error as e:
         print("Erro:", e)
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
 def consultar_usuarios():
     try:
@@ -44,9 +46,13 @@ def consultar_usuarios():
         cursor.execute("SELECT nome, cpf, email, pontos_acum FROM Usuario")
         for row in cursor.fetchall():
             print(f"Nome: {row[0]}, CPF: {row[1]}, Email: {row[2]}, Pontos: {row[3]}")
+    except Error as e:
+        print("Erro:", e)
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
 def deletar_usuario():
     cpf = input("CPF do usuário a excluir: ")
@@ -56,9 +62,13 @@ def deletar_usuario():
         cursor.execute("DELETE FROM Usuario WHERE cpf = %s", (cpf,))
         conn.commit()
         print("Usuário deletado.")
+    except Error as e:
+        print("Erro:", e)
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
 def editar_usuario():
     cpf = input("Digite o CPF do usuário que deseja editar: ")
@@ -115,8 +125,10 @@ def editar_usuario():
     except Error as e:
         print("Erro:", e)
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
 # ===== RESÍDUO =====
 def criar_residuo():
@@ -131,9 +143,13 @@ def criar_residuo():
         )
         conn.commit()
         print("Resíduo cadastrado!")
+    except Error as e:
+        print("Erro:", e)
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
 def consultar_residuos():
     try:
@@ -141,10 +157,14 @@ def consultar_residuos():
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM Residuo")
         for row in cursor.fetchall():
-            print(row)
+            print(f"ID: {row[0]}, Tipo: {row[1]}, Pontos: {row[2]}")
+    except Error as e:
+        print("Erro:", e)
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
 def atualizar_residuo():
     id_residuo = input("ID do resíduo: ")
@@ -159,9 +179,13 @@ def atualizar_residuo():
         )
         conn.commit()
         print("Resíduo atualizado.")
+    except Error as e:
+        print("Erro:", e)
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
 def deletar_residuo():
     id_residuo = input("ID do resíduo a excluir: ")
@@ -171,9 +195,13 @@ def deletar_residuo():
         cursor.execute("DELETE FROM Residuo WHERE id_residuo = %s", (id_residuo,))
         conn.commit()
         print("Resíduo deletado.")
+    except Error as e:
+        print("Erro:", e)
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
 # ===== DESCARTE =====
 def realizar_descarte():
@@ -213,25 +241,33 @@ def realizar_descarte():
         conn.commit()
         print("Descarte registrado com sucesso!")
 
+    except Error as e:
+        print("Erro:", e)
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
 def consultar_descartes():
     try:
         conn = conectar()
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT u.nome, r.tipo, d.data_hora, d.pontos_descarte
+            SELECT d.id_descarte, u.nome, r.tipo, d.data_hora, d.pontos_descarte
             FROM Descarte d
             JOIN Usuario u ON d.fk_usuario_id = u.id_usuario
             JOIN Residuo r ON d.fk_residuo_id = r.id_residuo
         """)
         for row in cursor.fetchall():
-            print(f"Usuário: {row[0]}, Resíduo: {row[1]}, Data: {row[2]}, Pontos: {row[3]}")
+            print(f"ID: {row[0]}, Usuário: {row[1]}, Resíduo: {row[2]}, Data: {row[3]}, Pontos: {row[4]}")
+    except Error as e:
+        print("Erro:", e)
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
 def editar_descarte():
     id_descarte = input("ID do descarte a editar: ")
@@ -283,9 +319,13 @@ def editar_descarte():
         conn.commit()
         print("Descarte atualizado com sucesso!")
 
+    except Error as e:
+        print("Erro:", e)
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
 def deletar_descarte():
     id_descarte = input("ID do descarte a excluir: ")
@@ -321,13 +361,61 @@ def deletar_descarte():
         conn.commit()
         print("Descarte deletado com sucesso!")
 
+    except Error as e:
+        print("Erro:", e)
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
+
+def listar_descartes_ultimo_mes():
+    conn = None
+    cursor = None
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+
+        hoje = datetime.now()
+        mes_passado = hoje - timedelta(days=30)
+
+        cursor.execute("""
+            SELECT u.nome AS usuario,
+                   r.tipo AS tipo_residuo,
+                   d.data_hora,
+                   d.pontos_descarte
+            FROM Descarte d
+            JOIN Usuario u ON d.fk_usuario_id = u.id_usuario
+            JOIN Residuo r ON d.fk_residuo_id = r.id_residuo
+            WHERE d.data_hora BETWEEN %s AND %s
+            ORDER BY d.data_hora DESC;
+        """, (mes_passado, hoje))
+
+        resultados = cursor.fetchall()
+
+        if resultados:
+            print(f"\nDescartes nos últimos 30 dias:\n{'-'}")
+            for row in resultados:
+                print(f"Usuário: {row['usuario']}")
+                print(f"Tipo de Resíduo: {row['tipo_residuo']}")
+                print(f"Data/Hora: {row['data_hora']}")
+                print(f"Pontos: {row['pontos_descarte']}")
+                print("---------------------------------------")
+        else:
+            print("Nenhum descarte realizado nos últimos 30 dias.")
+
+    except Error as err:
+        print(f"Erro ao buscar os dados: {err}")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 # ===== MENU =====
 def menu():
-    while True:
+    while True:       
         print("\n====== MENU COLETRON ======")
         print("="*30)
         
@@ -348,28 +436,43 @@ def menu():
         print("10. Consultar descartes")
         print("11. Editar descarte")
         print("12. Deletar descarte")
+        print("13. Listar descartes do último mês")
         print("0. Sair")
-
         
         print("\n" + "-"*30)
         opcao = input("Escolha: ")
 
         match opcao:
-            case '1': criar_usuario()
-            case '2': consultar_usuarios()
-            case '3': deletar_usuario()
-            case '4': editar_usuario()
-            case '5': criar_residuo()
-            case '6': consultar_residuos()
-            case '7': atualizar_residuo()
-            case '8': deletar_residuo()
-            case '9': realizar_descarte()
-            case '10': consultar_descartes()
-            case '11': editar_descarte()
-            case '12': deletar_descarte()
-            case '0': break
-            case _: print("Opção inválida!")
-
+            case '1':
+                criar_usuario()
+            case '2':
+                consultar_usuarios()
+            case '3':
+                deletar_usuario()
+            case '4':
+                editar_usuario()
+            case '5':
+                criar_residuo()
+            case '6':
+                consultar_residuos()
+            case '7':
+                atualizar_residuo()
+            case '8':
+                deletar_residuo()
+            case '9':
+                realizar_descarte()
+            case '10':
+                consultar_descartes()
+            case '11':
+                editar_descarte()
+            case '12':
+                deletar_descarte()
+            case '13':
+                listar_descartes_ultimo_mes()
+            case '0':
+                break
+            case _:
+                print("Opção inválida!")
 
 if __name__ == "__main__":
     menu()
